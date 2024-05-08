@@ -7,6 +7,7 @@ $success_msg = "";
 $c_one = rand(10, 30);
 $c_two = rand(10, 30);
 $form_key = generateFormKey();
+$ip = getIpAddress();
 
 if ("POST" == $_SERVER["REQUEST_METHOD"] && 0 != count($_POST)) {
 
@@ -46,13 +47,12 @@ if ("POST" == $_SERVER["REQUEST_METHOD"] && 0 != count($_POST)) {
         $validation_msg .= "<li> Please Enter valid Captcha </li>";
     }
 
-    $last = $db_conn->query("select * from  contact_form where createdAt >= DATE_SUB(NOW(),INTERVAL 2 HOUR)");
+    $last = $db_conn->query("select * from  contact_form where createdAt >= DATE_SUB(NOW(),INTERVAL 2 HOUR) AND user_ip='" . $ip . "'");
     if (0 != $last->num_rows) {
         $validation_msg .= "<li> You are already submitted the contact form, so please try again after 2 hours. </li>";
     }
 
     if (null == $validation_msg) {
-        $ip = getIpAddress();
         $name = $_POST["name"];
         $phone = $_POST["phone"];
         $mail = $_POST["mail"];
